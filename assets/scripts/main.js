@@ -9,23 +9,37 @@ $(document).ready(async ()=>{
 })
 
 left_btn.addEventListener('click', async ()=>{
-    index--;
-    console.log(index)
-    if(index<0){
-        index=0
-    }
-    currentAnimalImage.src=animals[index].image_src
-    nameElement.innerText=animals[index].name
+    $(currentAnimalImage).fadeTo(400,0);
+    await sleep(1000);
+    await changeAnimal("decrease");
+    $(currentAnimalImage).fadeTo(400,1)
 })
 
 right_btn.addEventListener('click', async ()=>{
-    index++;
-    console.log(index)
-    if(index>animals.length-1==true){
-        index=animals.length-1
-    }
-    currentAnimalImage.src=animals[index].image_src
+    $(currentAnimalImage).fadeTo(400,0);
+    await sleep(1000);
+    await changeAnimal("increase");
+    $(currentAnimalImage).fadeTo(400,1)
 })
+
+async function changeAnimal(mode){
+    if(mode=="increase"){
+        index++;
+        console.log(index)
+        if(index>animals.length-1==true){
+            index=animals.length-1
+        }
+        currentAnimalImage.src=animals[index].image_src
+    }
+    if(mode=='decrease'){
+        index--;
+        console.log(index)
+        if(index<0){
+            index=0
+        }
+        currentAnimalImage.src=animals[index].image_src
+    }
+}
 
 
 
