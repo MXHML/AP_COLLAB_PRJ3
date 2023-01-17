@@ -1,0 +1,7 @@
+#current-animal-wrapper{
+    position:absolute;
+    background-color: whitesmoke;
+    width: 100% !important;
+    left:0;
+    height:25rem;
+}
