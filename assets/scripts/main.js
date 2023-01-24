@@ -1,49 +1,14 @@
 const currentAnimalImage = document.getElementById("animal-image")
 const left_btn = document.getElementById('left--btn');
 const right_btn = document.getElementById("right--btn")
+const animal_preivew_wrapper = document.getElementById("animal-preview")
+const animal_name = document.getElementById('animal-name');
+const animal_info = document.getElementById('animal-info');
+const animal_facts = document.getElementById("animal-facts");
 
+let previewImages = animal_preivew_wrapper.querySelectorAll('img')
 let index=0;
-
-$(document).ready(async ()=>{
-    currentAnimalImage.src=animals[index].image_src
-})
-
-left_btn.addEventListener('click', async ()=>{
-    $(currentAnimalImage).fadeTo(400,0);
-    await sleep(1000);
-    await changeAnimal("decrease");
-    $(currentAnimalImage).fadeTo(400,1)
-})
-
-right_btn.addEventListener('click', async ()=>{
-    $(currentAnimalImage).fadeTo(400,0);
-    await sleep(1000);
-    await changeAnimal("increase");
-    $(currentAnimalImage).fadeTo(400,1)
-})
-
-async function changeAnimal(mode){
-    if(mode=="increase"){
-        index++;
-        console.log(index)
-        if(index>animals.length-1==true){
-            index=animals.length-1
-        }
-        currentAnimalImage.src=animals[index].image_src
-    }
-    if(mode=='decrease'){
-        index--;
-        console.log(index)
-        if(index<0){
-            index=0
-        }
-        currentAnimalImage.src=animals[index].image_src
-    }
-}
-
-
-
-animals=[
+let animals=[
     {animal:'Alpaca',weight:'110',height:'2.7-3.2ft',lifespan:'18-24 Years',fact:'Alpacas have one heart',image_src:'assets/images/alpaca.jpeg'},
     {animal:'Cat',weight:'10lbs',height:'9.1-9.8in',lifespan:'12-18 Years',fact:'Cats can jump up to 6x their length.',image_src:'assets/images/cat.jpeg'},
     {animal:'Cow',weight:'1000-2000lbs',height:'5-6ft',lifespan:'15-20 Years',fact:'Cows have 4 stomachs',image_src:'assets/images/cow.jpeg'},
@@ -61,8 +26,69 @@ animals=[
     {animal:'Pig',weight:'200-300lbs',height:'2-3ft',lifespan:'10-15 Years',fact:'Pigs can live up to 15 years',image_src:'assets/images/pig.jpeg'},
     {animal:'Rooster',weight:'4-6lbs',height:'18-24in',lifespan:'10-15 Years',fact:'Roosters can live up to 15 years',image_src:'assets/images/rooster.jpeg'},
     {animal:'Sheep',weight:'100-200lbs',height:'3-4ft',lifespan:'10-15 Years',fact:'Sheep can live up to 15 years',image_src:'assets/images/sheep.jpeg'},
-    {animal:'Wolf',weight:'80-150lbs',height:'2-3ft',lifespan:'8-10 Years',fact:'Wolves can live up to 10 years',image_src:'assets/images/wolf.jpeg'}
+    {animal:'Wolf',weight:'80-150lbs',height:'2-3ft',lifespan:'8-10 Years',fact:'Wolves can live up to 10 years',image_src:'assets/images/wolf.jpeg'},
 ]
+
+$(document).ready(()=>{
+    changeAnimal()
+})
+
+left_btn.addEventListener('click',()=>{changeAnimal('decrease')})
+right_btn.addEventListener('click',()=>{changeAnimal('increase')})
+
+async function changeAnimal(mode){
+    console.log(`changeAnimal: ${mode}`)
+    if(mode=='increase'){
+        index++
+        if(index>17){
+            index=0
+        }
+    }else if(mode=='decrease'){
+        index--
+        if(index<0){
+            index=0
+        }
+    }
+    loadPreviewImages(index);
+    console.log(`INDEX:${index}`)
+    currentAnimalImage.src=animals[index].image_src;
+    animal_name.innerText=animals[index].animal
+    animal_info.innerText=`${animals[index].weight}Lbs|${animals[index].height}|${animals[index].lifespan}`
+    animal_facts.innerText=animals[index].fact
+    await sleep(100);
+    $(currentAnimalImage).fadeTo(400,1);
+}
+
+let rindex=6;
+async function loadPreviewImages(pindex){
+    for(let x=0;x<previewImages.length;x++){
+        previewImages[x].className=index+x+1
+        if(previewImages[x].className<17||previewImages[x].className==17){
+        previewImages[x].src=animals[pindex+x+1].image_src;}
+        if(previewImages[x].className>17){
+            console.log(`loadPreviewImages: Out of range! Resetting...`)
+            console.log(`rindex:${rindex}`)
+            previewImages[x].src=animals[rindex].image_src
+            previewImages[x].className=rindex
+            rindex--
+        }
+        if(rindex==0){
+            rindex=6
+        }
+    }
+    previewsListeners();
+}
+
+async function previewsListeners(){
+    for(let x=1;x<previewImages.length+1;x++){
+        document.getElementById(`preview-${x}`).addEventListener('click',async ()=>{
+            let self = document.getElementById(`preview-${x}`);
+            index = self.className
+            changeAnimal();
+            loadPreviewImages(index);
+        })
+    }
+}
 
 async function sleep(ms){
     return new Promise(resolve=>setTimeout(resolve,ms))
